@@ -1,0 +1,116 @@
+/* FITBEAT still-only v3 — prevent all legacy mascot movement */
+html body img.puppy,html body img.puppy.idle,html body img.puppy.dance-left,html body img.puppy.dance-right,html body img.puppy.reach,html body img.puppy.twist,html body img.puppy.cheer,html body img.puppy.miss{
+ animation:none!important;transition:none!important;transform:none!important;will-change:auto!important;
+}
+.puppy{object-fit:contain!important}
+
+/* FITBEAT Final Update: preserve approved v3 art and backgrounds. */
+#levels .fb-phase-tabs{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:4px auto 14px}
+#levels .fb-phase-tabs button{border-radius:30px;background:#fff8ed;padding:10px 18px;font-size:1rem}
+#levels .fb-phase-tabs button.selected{background:#ffc6da;border-color:#b57a9c;box-shadow:0 4px 0 #b57a9c55}
+#levels .fb-phase-help{position:relative;margin:0 auto 15px;max-width:660px;color:#78596a}
+#levels .level-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));max-width:1100px;gap:14px}
+#levels .level{padding:10px;gap:7px;min-width:0}
+#levels .level img{height:160px}
+#levels .level b{font-size:1.02rem}
+#levels .level span{font-size:.84rem}
+#levels .fb-single{max-width:350px;justify-self:center;width:100%}
+#game .lanes{height:390px}
+#game .lane .hit{top:67%;bottom:auto;transform:translate(-50%,-50%);z-index:2}
+#game .lane .hit::before{content:"";position:absolute;inset:-6px;border:2px solid #ffcf70;border-radius:50%;box-shadow:0 0 10px #fff4a9;pointer-events:none}
+#game .lane .hit img{display:block}
+#game .lane .note{z-index:3}
+#game .game-tip{font-size:.84rem}
+@media(max-width:700px){
+ #levels .fb-phase-tabs{gap:5px}
+ #levels .fb-phase-tabs button{font-size:.83rem;padding:8px 10px}
+ #levels .level-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ #levels .level img{height:110px}
+ #levels .level b{font-size:.89rem}
+ #levels .level span{font-size:.77rem}
+ #game .lanes{height:350px;top:5px}
+ #game .play-area{height:395px}
+ #game .lane .hit{top:67%}
+}
+
+/* Music volume and educational intensity guide */
+.fb-volume-control{display:flex;flex-direction:column;align-items:center;gap:12px;margin:20px auto;padding:18px;max-width:360px;background:#fff9edf2;border:2px solid #d5a0b8;border-radius:22px;font-size:1.1rem}
+.fb-volume-control input{width:100%;accent-color:#e987b2;cursor:pointer}
+#intensity-guide{overflow-y:auto;padding-bottom:35px}
+.fb-guide-intro{max-width:680px;margin:0 auto 18px}
+.fb-guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;max-width:1060px;margin:0 auto 20px;text-align:left}
+.fb-guide-grid article{background:#fff9edf2;border:2px solid #d5a0b8;border-radius:20px;padding:16px}
+.fb-guide-grid h3{margin:0 0 10px;color:#b85f93}
+.fb-guide-grid p{line-height:1.45;margin:8px 0}
+.fb-guide-note{max-width:950px;margin:12px auto 22px;padding:17px;background:#fff9e6e8;border:2px solid #e5c891;border-radius:20px;line-height:1.55;text-align:left}
+#intensity-guide>button{margin:5px}
+
+/* Approved panoramic artwork: Maximum and Interval scenes */
+#game[data-level="3"] .game-bg{background-image:url('assets/level4-amusement.webp')!important;background-position:center!important}
+#game[data-level="4"] .game-bg{background-image:url('assets/level5-lakeside.webp')!important;background-position:center!important}
+
+
+/* FITBEAT responsive layout — single authoritative viewport layout. */
+:root{--fb-margin:12px}
+html,body{width:100%;margin:0;min-height:100%;overflow-x:hidden}
+body{min-height:100dvh}
+.shell{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;width:min(1540px,calc(100% - 2 * var(--fb-margin)))!important;max-width:none!important;height:calc(100dvh - 2 * var(--fb-margin))!important;min-height:0!important;margin:var(--fb-margin) auto!important;overflow:hidden!important}
+.topbar{box-sizing:border-box!important;flex:0 0 54px!important;height:54px!important;min-height:0!important}
+.shell>.screen{box-sizing:border-box!important;min-height:0!important;flex:1 1 auto!important}
+.shell>.screen:not(.active){display:none!important}
+#levels.active{display:flex!important;flex-direction:column;justify-content:center;align-items:center;gap:clamp(5px,1.3vh,14px);padding:clamp(8px,1.6vh,18px);overflow:auto}
+#levels h2{margin:0!important;font-size:clamp(1.5rem,3vw,2.7rem);line-height:1.15;flex:none}
+#levels .fb-phase-tabs,#levels .fb-phase-help{margin:0!important;flex:none}
+#levels .level-grid{width:min(100%,1160px);max-width:1160px!important;margin:0!important;gap:clamp(7px,1vw,14px);flex:none}
+#levels .level{min-width:0;padding:9px;gap:5px}
+#levels .level img{height:clamp(90px,22vh,175px);object-fit:cover}
+#levels>.secondary{flex:none;margin:0}
+#game.active{display:grid!important;grid-template-rows:auto auto minmax(0,1fr) auto auto;row-gap:clamp(3px,.7vh,8px);padding:clamp(6px,1.2vh,12px) clamp(8px,2vw,24px)!important;overflow:hidden!important}
+#game .hud{min-height:0;align-self:center}
+#game .hud .pill{padding:7px 14px}
+#game .game-progress{height:14px;margin:0 auto;width:55%}
+#game .play-area{height:auto!important;min-height:0!important;overflow:hidden}
+#game .lanes{height:calc(100% - 8px)!important;top:4px;max-height:none!important}
+#game .game-puppy{bottom:0;width:min(23%,225px)}
+#game .game-puppy .puppy{max-height:min(27dvh,225px)}
+#game .combo{bottom:6px;font-size:1.2rem}
+#game .combo strong{font-size:2.5rem}
+#game .controls{flex:none;align-self:center}
+#game .controls button{padding:7px 16px}
+#game .game-tip{flex:none;margin:0 auto;font-size:.78rem}
+#game .game-bg{background-size:cover!important;background-position:center!important}
+@media(min-width:701px){body:has(#game.active),body:has(#levels.active){overflow-y:hidden}}
+@media(max-width:700px){
+ :root{--fb-margin:0px}
+ .shell{width:100%!important;margin:0!important;height:100dvh!important;border-radius:0!important}
+ .topbar{height:48px!important;flex-basis:48px!important}
+ #levels.active{justify-content:flex-start;gap:10px;overflow-y:auto}
+ #levels .level-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #levels .level img{height:clamp(85px,17vh,135px)}
+ #game.active{padding:6px!important;row-gap:4px}
+ #game .game-progress{height:12px;width:70%}
+ #game .lanes{left:5%;width:90%;height:calc(100% - 6px)!important}
+ #game .game-puppy{width:25%}
+ #game .game-puppy .puppy{max-height:22dvh}
+ #game .combo{bottom:4px;font-size:.85rem}
+ #game .combo strong{font-size:1.6rem}
+ #game .controls{flex-wrap:nowrap;gap:4px;width:100%}
+ #game .controls button{flex:1;min-width:0;padding:7px 2px;font-size:.75rem}
+ #game .game-tip{font-size:.65rem;max-width:100%}
+}
+@media(max-height:650px) and (min-width:701px){
+ #levels.active{gap:5px}
+ #levels .level img{height:clamp(65px,17vh,120px)}
+ #levels h2{font-size:1.7rem}
+ #game .hud .pill{padding:3px 9px}
+ #game .controls button{padding:4px 12px}
+}
+
+/* Final viewport safety: no page overflow; game and level panels own their scrolling. */
+html,body{height:100%;overflow:hidden!important}
+.shell{height:calc(100dvh - 16px)!important;min-height:0!important}
+.shell>.screen.active{min-height:0!important}
+#game.active{overflow:hidden!important}
+#game .game-bg{background-size:cover!important;background-position:center!important}
+#levels.active{overflow-y:auto!important}
+@media(max-width:700px){.shell{height:100dvh!important;margin:0!important}}

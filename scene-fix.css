@@ -1,0 +1,23 @@
+/* FITBEAT v0.3 — independent background scenes; no baked-in UI */
+.home-art{background-image:url('assets/bakery-scene.svg')!important;filter:none!important}
+.game-bg{background-image:url('assets/lake-scene.svg')!important;filter:none!important}
+.result-bg{background-image:url('assets/cherry-scene.svg')!important;filter:none!important}
+.home-content{grid-template-columns:46% 54%;grid-template-rows:auto auto 1fr;min-height:620px;isolation:isolate}
+.home-content .logo{grid-column:1/-1;grid-row:1;font-size:clamp(3.5rem,7vw,6.8rem);line-height:1.1;z-index:2}
+.home-content .subtitle{grid-column:1/-1;grid-row:2;z-index:2}
+.puppy-stage{grid-column:1;grid-row:3;display:flex;justify-content:center;align-items:end;min-width:0;height:360px;overflow:visible}
+.puppy-stage .puppy{display:block;width:min(310px,85%)!important;height:auto!important;max-height:350px!important;object-fit:contain}
+.menu{grid-column:2;grid-row:3;z-index:3;align-self:center}
+.menu button{background:#ffc0cb}
+.game-puppy{width:23%;left:1%;bottom:0}
+.game-puppy .puppy{width:100%;max-height:260px}
+.scenic{pointer-events:none}
+@media(max-width:700px){.home-content{grid-template-columns:1fr;grid-template-rows:auto auto 190px auto;min-height:620px}.home-content .logo{font-size:3.5rem}.puppy-stage{grid-column:1;grid-row:3;height:190px}.puppy-stage .puppy{width:auto!important;height:185px!important;max-height:185px!important}.menu{grid-column:1;grid-row:4}.menu button{width:min(300px,90%)}.game-puppy{width:25%}}
+
+/* v0.4: four individually cropped hand-drawn game scenes */
+.home-art{background-image:url('assets/menu-bakery.webp')!important;background-position:center!important}
+.game-bg{background-image:url('assets/level1-spring.webp')!important;background-position:center!important}
+#game[data-level="0"] .game-bg{background-image:url('assets/level1-spring.webp')!important}
+#game[data-level="1"] .game-bg{background-image:url('assets/level2-bakery.webp')!important}
+#game[data-level="2"] .game-bg{background-image:url('assets/level3-night.webp')!important}
+.result-bg{background-image:url('assets/menu-bakery.webp')!important}

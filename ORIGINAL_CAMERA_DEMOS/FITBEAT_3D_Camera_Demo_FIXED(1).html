@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FITBEAT ♡ 3D Camera Rhythm Demo</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#68577e}*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#ffe4f0,#e8e5ff 55%,#d9f5ff);min-height:100vh;padding:16px}.app{max-width:1050px;margin:auto}h1{margin:0;color:#c46eae}.sub{margin:6px 0 15px}.top,.buttons,.legend{display:flex;gap:9px;flex-wrap:wrap}.chip,.panel{border:2px solid white;background:#ffffffc9;border-radius:18px;padding:12px;box-shadow:0 7px 20px #b9a0c529}.chip{font-weight:750}.chip b{color:#bc6aab}.layout{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-top:13px}.stage{position:relative;height:490px;border-radius:20px;overflow:hidden;border:5px solid white;background:linear-gradient(180deg,#fff7ff,#d8e8ff)}.lanes{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr}.lane{position:relative;border-right:2px dashed #ffffff;overflow:hidden}.lane:last-child{border:0}.lane-title{text-align:center;font-weight:900;background:#ffffffaa;padding:9px}.target{position:absolute;bottom:55px;left:50%;transform:translateX(-50%);height:74px;width:74px;border:5px solid white;border-radius:50%;display:grid;place-items:center;background:#ffffffb9;font-size:34px;box-shadow:0 4px 16px #b9a0c544}.hitline{position:absolute;bottom:90px;left:0;right:0;height:3px;background:#f0a2c8;box-shadow:0 0 15px #e894b9}.note{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);height:60px;width:60px;border-radius:50%;border:5px solid white;display:grid;place-items:center;font-size:33px;color:white;font-weight:900;box-shadow:0 5px 18px #a18cae66,inset 0 5px 6px #ffffff70}.up{background:linear-gradient(140deg,#ffcde1,#e97cae)}.side{background:linear-gradient(140deg,#ffe3ac,#f0a064)}.forward{background:linear-gradient(140deg,#e4ccff,#a18be8)}.down{background:linear-gradient(140deg,#cff4d0,#79c99a)}.circlemove{background:linear-gradient(140deg,#c8efff,#7db2ea)}.panel{margin-bottom:12px}button{background:#e79cc7;color:white;border:0;border-radius:13px;padding:11px 15px;font-weight:800;cursor:pointer}button:disabled{opacity:.5}.secondary{background:#a9a2df}video{width:100%;max-height:220px;object-fit:contain;background:#4e4667;border-radius:13px;transform:scaleX(-1)}.status{font-size:13px;line-height:1.5;margin-top:8px}.legend{justify-content:space-between}.legend span{text-align:center;font-size:12px;font-weight:700}.legend i{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;border:4px solid white;font-size:25px;color:white;font-style:normal;margin:auto auto 5px}.feedback{position:absolute;top:43%;width:100%;text-align:center;font-size:34px;font-weight:1000;color:#c16aab;text-shadow:0 2px white;pointer-events:none}.tiny{font-size:12px;line-height:1.5}#progress{width:100%;accent-color:#e79cc7}@media(max-width:720px){.layout{grid-template-columns:1fr}.stage{height:390px}.note{width:50px;height:50px;font-size:28px}.target{width:60px;height:60px}.hitline{bottom:82px}.target{bottom:52px}}
+</style></head>
+<body><main class="app"><h1>FITBEAT ♡</h1><p class="sub">Pastel Rhythm · Camera 3D · เวอร์ชันทดลองแยกจากเกมหลัก</p>
+<div class="top"><div class="chip">⭐ Score <b id="score">0</b></div><div class="chip">🔥 Combo <b id="combo">0</b></div><div class="chip">⏱ <b id="time">60</b>s</div><div class="chip">🎯 <b id="hits">0</b> hits</div></div>
+<div class="layout"><section><div class="stage" id="stage"><div class="hitline"></div><div class="lanes"><div class="lane" id="lane-left"><div class="lane-title">💗 LEFT ARM</div><div class="target" id="target-left">○</div></div><div class="lane" id="lane-right"><div class="lane-title">💙 RIGHT ARM</div><div class="target" id="target-right">○</div></div></div><div class="feedback" id="feedback">READY ♡</div></div>
+<div class="panel"><div class="buttons"><button id="camera">📷 เปิดกล้อง</button><button id="start">▶ Start Game</button><button id="stop" class="secondary" disabled>■ Stop</button></div><div class="status" id="status">เริ่มจากเปิดกล้อง ยืนให้เห็นไหล่ ข้อศอก และมือทั้งสองข้าง จากนั้นกด Start Game</div><progress id="progress" value="0" max="60"></progress></div>
+<div class="panel"><strong>ท่าทาง 5 แบบ</strong><div class="legend"><span><i class="up">↑</i>ยกแขน</span><span><i class="side">↔</i>กางแขน</span><span><i class="forward">→</i>เหยียดหน้า</span><span><i class="down">↓</i>ลดแขน</span><span><i class="circlemove">↻</i>หมุนแขน</span></div></div></section>
+<aside><div class="panel"><strong>📷 Camera preview</strong><video id="video" autoplay muted playsinline></video><div class="status">LEFT ARM: <b id="left-pose">—</b><br>RIGHT ARM: <b id="right-pose">—</b><br><span id="cam-status">Camera off</span></div></div>
+<div class="panel tiny"><strong>วิธีเล่น</strong><p>เมื่อโน้ตวงกลมลงมาใกล้เส้นสีชมพู ให้ทำท่าตามสัญลักษณ์ด้วยแขนฝั่งที่โน้ตตกลงมา</p><p>ท่าต้องเปลี่ยนเป็นท่าที่ถูกต้องใกล้จังหวะโน้ตเพื่อได้คะแนน ระบบทดลองนี้ใช้การติดตามแขนแบบ 3D โดย MediaPipe และต้องใช้อินเทอร์เน็ต</p><p><strong>ทดสอบโดยไม่ใช้กล้อง:</strong> แขนซ้ายกด 1–5 และแขนขวากด Q W E R T ตามลำดับไอคอน</p><p><strong>สำคัญ:</strong> กล้องทำงานเมื่อเปิดเกมผ่าน HTTPS หรือ localhost เท่านั้น การเปิดไฟล์ HTML โดยตรงอาจใช้กล้องไม่ได้</p></div></aside></div></main>
+<script type="module">
+const $=id=>document.getElementById(id), video=$('video');
+const poses=['up','side','forward','down','circlemove'],icons={up:'↑',side:'↔',forward:'→',down:'↓',circlemove:'↻',none:'○'},names={up:'Overhead Raise',side:'Side Raise',forward:'Forward Reach',down:'Arms Down',circlemove:'Arm Circles',none:'—'};
+let stream=null,tracker=null,cameraOn=false,lastVideo=-1,gameOn=false,startAt=0,spawnAt=0,notes=[],score=0,combo=0,hits=0,anim=0,session=0;
+const history={left:[],right:[]},stable={left:{key:'none',count:0,shown:'none'},right:{key:'none',count:0,shown:'none'}};
+function msg(s){$('status').textContent=s}function cameraMsg(s){$('cam-status').textContent=s}
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+function angle(a,b,c){const ux=a.x-b.x,uy=a.y-b.y,vx=c.x-b.x,vy=c.y-b.y;return Math.acos(Math.max(-1,Math.min(1,(ux*vx+uy*vy)/(Math.hypot(ux,uy)*Math.hypot(vx,vy)+1e-9))))*180/Math.PI}
+function detect(lm,side,now,world){
+ const ids=side==='left'?[11,13,15,23]:[12,14,16,24];
+ const [shoulder,elbow,wrist,hip]=ids.map(i=>lm[i]);
+ if(!shoulder||!elbow||!wrist||!hip)return 'none';
+ const vis=Math.min(shoulder.visibility??1,elbow.visibility??1,wrist.visibility??1);
+ if(vis<.45)return 'none';
+ const torso=Math.max(.06,dist(shoulder,hip)),arm=dist(shoulder,wrist);
+ const straight=angle(shoulder,elbow,wrist)>140;
+ const dy=(wrist.y-shoulder.y)/torso,dx=Math.abs(wrist.x-shoulder.x)/torso;
+ const h=history[side];h.push({x:wrist.x,y:wrist.y,t:now});
+ while(h.length&&now-h[0].t>1500)h.shift();
+ if(h.length>8){const cx=h.reduce((a,p)=>a+p.x,0)/h.length,cy=h.reduce((a,p)=>a+p.y,0)/h.length;
+ let travel=0;for(let i=1;i<h.length;i++){const a=Math.atan2(h[i-1].y-cy,h[i-1].x-cx),b=Math.atan2(h[i].y-cy,h[i].x-cx);let d=b-a;while(d>Math.PI)d-=2*Math.PI;while(d< -Math.PI)d+=2*Math.PI;travel+=d}
+ const radius=h.reduce((a,p)=>a+Math.hypot(p.x-cx,p.y-cy),0)/h.length;
+ if(Math.abs(travel)>Math.PI*1.55&&radius>torso*.2&&radius<torso*1.8)return 'circlemove'}
+ if(world?.length>=25){
+ const [S,E,W,H]=ids.map(i=>world[i]),vec=(a,b)=>[b.x-a.x,b.y-a.y,b.z-a.z],dot=(a,b)=>a.reduce((v,x,i)=>v+x*b[i],0),norm=a=>Math.hypot(...a),unit=a=>a.map(x=>x/(norm(a)||1));
+ const vertical=unit(vec(H,S)),arm3=vec(S,W),len=norm(arm3),elevation=Math.asin(Math.max(-1,Math.min(1,dot(unit(arm3),vertical))))*180/Math.PI;
+ const shoulderWidth=norm(vec(world[11],world[12])),across=unit(vec(world[11],world[12])),lateral=Math.abs(dot(unit(arm3),across)),depth=Math.abs(arm3[2])/(len||1);
+ const elbowStraight=dot(unit(vec(S,E)),unit(vec(E,W)))>.72;
+ if(elbowStraight&&len>Math.max(.12,shoulderWidth*.7)&&elevation>-28&&elevation<40&&depth>.48&&depth>lateral*.95)return 'forward';
+ if(elevation>40&&len>.18)return 'up';
+ if(elbowStraight&&elevation>-30&&elevation<32&&lateral>.58&&lateral>depth*.9)return 'side';
+ if(elevation< -38)return 'down';
+ }
+ if(dy<-.6&&arm>torso*.65)return 'up';
+ if(straight&&dx>.65&&Math.abs(dy)<.5)return 'side';
+ if(dy>.65&&dx<.6)return 'down';
+ return 'none'
+}
+function motion(side,pose){if(!gameOn)return;const elapsed=(performance.now()-startAt)/1000;const n=notes.filter(n=>n.side===side&&n.pose===pose&&!n.hit&&Math.abs(elapsed-n.at-2.1)<.44).sort((a,b)=>Math.abs(elapsed-a.at-2.1)-Math.abs(elapsed-b.at-2.1))[0];if(!n)return;n.hit=true;n.el.remove();const delta=Math.abs(elapsed-n.at-2.1);combo++;hits++;score+=(delta<.17?100:50)+Math.min(combo,20)*5;$('feedback').textContent=delta<.17?'PERFECT! ✨':'GOOD! 🌸';$('score').textContent=score;$('combo').textContent=combo;$('hits').textContent=hits}
+function spawn(now){const side=Math.random()<.5?'left':'right',pose=poses[Math.floor(Math.random()*5)],el=document.createElement('div');el.className='note '+pose;el.textContent=icons[pose];$('lane-'+side).append(el);notes.push({side,pose,el,at:now,hit:false})}
+function stopGame(done=false){gameOn=false;cancelAnimationFrame(anim);$('stop').disabled=true;$('start').disabled=false;for(const n of notes)n.el.remove();notes=[];$('feedback').textContent=done?'FINISH! '+score+' ⭐':'READY ♡';if(done)msg('จบเกม! คะแนน '+score+' · ตีโน้ตสำเร็จ '+hits+' ครั้ง')}
+function loopGame(){if(!gameOn)return;const elapsed=(performance.now()-startAt)/1000;if(elapsed>=60){stopGame(true);return}$('time').textContent=Math.ceil(60-elapsed);$('progress').value=elapsed;while(elapsed-spawnAt>=.95){spawnAt+=.95;spawn(spawnAt)}for(const n of notes){if(n.hit)continue;const progress=(elapsed-n.at)/2.1;n.el.style.top=(Math.max(-.15,Math.min(1.4,progress))*($('stage').clientHeight-145)+45)+'px';if(progress>1.22){n.hit=true;n.el.remove();combo=0;$('combo').textContent='0';$('feedback').textContent='MISS'}}notes=notes.filter(n=>!n.hit);anim=requestAnimationFrame(loopGame)}
+$('start').onclick=()=>{stopGame();score=combo=hits=0;$('score').textContent='0';$('combo').textContent='0';$('hits').textContent='0';$('time').textContent='60';$('progress').value=0;startAt=performance.now();spawnAt=-.95;gameOn=true;$('start').disabled=true;$('stop').disabled=false;$('feedback').textContent='LET’S MOVE!';msg('เล่นอยู่! ทำท่าให้ตรงจังหวะที่โน้ตถึงเส้นสีชมพู');loopGame()};
+$('stop').onclick=()=>stopGame();
+window.addEventListener('keydown',e=>{const map={Digit1:['left','up'],Digit2:['left','side'],Digit3:['left','forward'],Digit4:['left','down'],Digit5:['left','circlemove'],KeyQ:['right','up'],KeyW:['right','side'],KeyE:['right','forward'],KeyR:['right','down'],KeyT:['right','circlemove']};if(map[e.code])motion(...map[e.code])});
+async function loopCamera(){if(!cameraOn)return;requestAnimationFrame(loopCamera);if(video.readyState<2||video.currentTime===lastVideo||!tracker)return;lastVideo=video.currentTime;try{const now=performance.now(),result=tracker.detectForVideo(video,now),lm=result.landmarks?.[0],world=result.worldLandmarks?.[0];for(const side of ['left','right']){const s=stable[side],key=lm?detect(lm,side,now,world):'none';if(key===s.key)s.count=Math.min(6,s.count+1);else{s.key=key;s.count=1}if(s.count>=3||key==='none'){if(key!==s.shown&&key!=='none')motion(side,key);s.shown=key;$('target-'+side).textContent=icons[key];$(side+'-pose').textContent=names[key]}}}catch(e){cameraMsg('Tracking error: '+e.message);stopCamera()}}
+async function startCamera(){if(cameraOn)return;$('camera').disabled=true;cameraMsg('กำลังโหลดโมเดล 3D…');try{
+ if(!navigator.mediaDevices?.getUserMedia)throw Error('ต้องเปิดผ่าน HTTPS หรือ localhost');
+ const base='https://nekokan0307-svg.github.io/damo002/';
+ const {FilesetResolver,PoseLandmarker}=await import(base+'vision_bundle.mjs');
+ const vision=await FilesetResolver.forVisionTasks(base+'wasm');
+ const model=base+'pose_landmarker_lite.task';
+ tracker=await PoseLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:model,delegate:'GPU'},runningMode:'VIDEO',numPoses:1}).catch(()=>PoseLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:model,delegate:'CPU'},runningMode:'VIDEO',numPoses:1}));
+ stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'user',width:{ideal:960},height:{ideal:720}}});video.srcObject=stream;await video.play();cameraOn=true;lastVideo=-1;cameraMsg('🟢 Camera ready');$('camera').textContent='📷 ปิดกล้อง';$('camera').disabled=false;loopCamera()
+ }catch(e){cameraMsg('เปิดกล้องไม่ได้: '+e.message);$('camera').disabled=false;stopCamera()}}
+function stopCamera(){cameraOn=false;stream?.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;tracker?.close();tracker=null;$('camera').textContent='📷 เปิดกล้อง';$('camera').disabled=false}
+$('camera').onclick=()=>{if(cameraOn){stopCamera();cameraMsg('Camera off')}else startCamera()};
+window.addEventListener('pagehide',()=>{stopGame();stopCamera()});
+</script></body></html>

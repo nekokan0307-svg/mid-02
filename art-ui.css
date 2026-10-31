@@ -1,0 +1,24 @@
+/* FITBEAT ART v1 — designed mascot, pastel UI and custom flower notes */
+#home .home-art,#game .game-bg,#results .result-bg{filter:none!important}
+.logo{color:#ff83aa;text-shadow:3px 4px 0 #fff7e9,5px 6px 0 #82565b,-2px -2px 0 #fff7e9!important}
+.logo span{color:#ffd17c}
+.subtitle{background:#fff9e9e9!important;box-shadow:0 4px 0 #96677355}
+.menu button{border:3px solid #895c67;border-radius:25px;box-shadow:0 5px 0 #86505a66,0 0 0 4px #fff7e777 inset;transition:transform .14s}
+.menu button:nth-child(1){background:linear-gradient(#ffbfd2,#ff85a9)!important}
+.menu button:nth-child(2){background:linear-gradient(#ffe9af,#ffca70)!important}
+.menu button:nth-child(3){background:linear-gradient(#eafaff,#a7ddff)!important}
+.menu button:nth-child(4){background:linear-gradient(#f4e6ff,#d8bafa)!important}
+.menu button:hover{transform:translateY(-3px)}
+.level{border-radius:22px;background:#fff9edf2;border-color:#a67c7e;box-shadow:0 7px 0 #b9858066}
+.level img{border-radius:16px}
+.hud .pill{background:#fff8eaf0;border-color:#a87880;box-shadow:0 4px 0 #ae757666}
+#pause{background:linear-gradient(#e3d3ff,#b995ed);border-color:#9c75a9}
+.lane:nth-child(1) .lane-name{background:#ffb2d0}.lane:nth-child(2) .lane-name{background:#ffe29a}.lane:nth-child(3) .lane-name{background:#b3e4ff}.lane:nth-child(4) .lane-name{background:#ddc8ff}
+.hit{width:60px;height:60px;display:grid;place-items:center;background:#fff8e5a8;border:2px solid #fff6ed;border-radius:50%}
+.hit img{width:49px;height:49px;object-fit:contain}.note img{width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 4px 2px #865a6566)}
+.feedback{color:#f36b9f;text-shadow:3px 3px #fff8e9,-2px -2px #fff8e9}
+.combo{background:#fff8e9d9;border:3px solid #d28da9;border-radius:22px;padding:7px 14px;color:#df659c}
+.controls button{border-radius:18px;background:linear-gradient(#fff9e5,#ffdbaa)}
+.result-card{background:#fff9edf2;border-color:#b47a8a;box-shadow:0 9px 0 #8f627255}
+.puppy{object-fit:contain;object-position:center;filter:drop-shadow(2px 6px 3px #65443b55)}
+@media(max-width:700px){.hit{width:43px;height:43px}.hit img{width:36px;height:36px}.note img{width:42px;height:42px}.combo{padding:3px 6px;border-width:2px}}
