@@ -1,5 +1,8 @@
 (()=>{
-const $=id=>document.getElementById(id);let peer=null,conn=null,enabled=false,base=0,filtered=0,lastPulse=0,seq=0,count=0,side='left',lastSend=0;
+const $=id=>document.getElementById(id);let wakeLock=null;
+async function keepAwake(){try{if(!('wakeLock' in navigator))throw Error('เบราว์เซอร์นี้ไม่รองรับ Wake Lock');wakeLock=await navigator.wakeLock.request('screen');$('wake-status').textContent='✓ Screen Wake Lock active · อย่าล็อกหน้าจอ';wakeLock.addEventListener('release',()=>{$('wake-status').textContent='⚠ Wake Lock released · โปรดเปิดอีกครั้ง'})}catch(e){$('wake-status').textContent='⚠ '+e.message+' · ตั้งค่าไม่ให้หน้าจอดับด้วยตนเอง'}}
+$('wake').onclick=keepAwake;
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&wakeLock&&!wakeLock.released) return;if(!document.hidden&&wakeLock)keepAwake()});let peer=null,conn=null,enabled=false,base=0,filtered=0,lastPulse=0,seq=0,count=0,side='left',lastSend=0;
 function status(s){$('status').textContent=s}
 $('connect').onclick=()=>{
  const code=$('pair').value.trim();if(!/^fb-[a-z0-9]{6}-[a-z0-9]{3}$/.test(code)){status('กรอกรหัสจากหน้าจอเกม');return}
@@ -18,7 +21,7 @@ $('enable').onclick=async()=>{try{
  if(!window.isSecureContext)throw Error('ต้องเปิดผ่าน HTTPS หรือ localhost');
  if(typeof DeviceMotionEvent==='undefined')throw Error('โทรศัพท์นี้ไม่รองรับ Motion sensor');
  if(typeof DeviceMotionEvent.requestPermission==='function'){const r=await DeviceMotionEvent.requestPermission();if(r!=='granted')throw Error('Motion permission denied')}
- if(!enabled){window.addEventListener('devicemotion',onMotion);enabled=true}status('✓ Motion enabled; move phone to test');
+ if(!enabled){window.addEventListener('devicemotion',onMotion);enabled=true}keepAwake();status('✓ Motion enabled; move phone to test');
  }catch(e){status('⚠ '+e.message)}};
 $('calibrate').onclick=()=>{filtered=0;base=0;lastPulse=performance.now();status('Motion baseline reset')};
 })();

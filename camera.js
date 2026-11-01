@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id),video=$('camera-video'),btn=$('camera-toggle'),status=$('camera-status');
 let tracker=null,stream=null,running=false,lastVideo=-1,lastFrame=0;
-const histories={left:[],right:[]},stables={left:{key:'none',n:0},right:{key:'none',n:0}};
+const histories={left:[],right:[]},stables={left:{key:'none',n:0,lastHit:'none',lastAt:0},right:{key:'none',n:0,lastHit:'none',lastAt:0}};
 function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 function angle(a,b,c){const ux=a.x-b.x,uy=a.y-b.y,vx=c.x-b.x,vy=c.y-b.y;return Math.acos(Math.max(-1,Math.min(1,(ux*vx+uy*vy)/(Math.hypot(ux,uy)*Math.hypot(vx,vy)+1e-9))))*180/Math.PI}
 function detect(lm,side,now,world){
@@ -54,10 +54,10 @@ function detect(lm,side,now,world){
  return ['none',visibility*.5]
 }
 
-async function frame(){if(!running)return;requestAnimationFrame(frame);if(!tracker||video.readyState<2||video.currentTime===lastVideo||performance.now()-lastFrame<45)return;
+async function frame(){if(!running)return;requestAnimationFrame(frame);if(!tracker||video.readyState<2||video.currentTime===lastVideo||performance.now()-lastFrame<33)return;
  lastVideo=video.currentTime;lastFrame=performance.now();try{
  const r=tracker.detectForVideo(video,lastFrame),lm=r.landmarks?.[0],world=r.worldLandmarks?.[0];if(!lm){status.textContent='ไม่พบผู้เล่น';return}
- const labels=[];for(const side of ['left','right']){const [key]=detect(lm,side,lastFrame,world),s=stables[side];if(s.key===key)s.n=Math.min(s.n+1,5);else{s.key=key;s.n=1}if(s.n>=1&&key==='down'||s.n>=2&&key!=='none'){window.fitbeatHit?.(side,key);labels.push(side[0].toUpperCase()+':'+key)}else labels.push(side[0].toUpperCase()+':—')}
+ const labels=[];for(const side of ['left','right']){const [key]=detect(lm,side,lastFrame,world),s=stables[side];if(s.key===key)s.n=Math.min(s.n+1,5);else{s.key=key;s.n=1}if(key==='none'){s.lastHit='none';labels.push(side[0].toUpperCase()+':—')}else if(s.n>=2){if(key!==s.lastHit||lastFrame-s.lastAt>480){window.fitbeatHit?.(side,key);s.lastHit=key;s.lastAt=lastFrame}labels.push(side[0].toUpperCase()+':'+key)}else labels.push(side[0].toUpperCase()+':—')}
  status.textContent='Tracking · '+labels.join(' ');
  }catch(e){status.textContent='Tracking: '+e.message}}
 btn.addEventListener('click',async()=>{

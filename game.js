@@ -5,22 +5,23 @@
 const $=id=>document.getElementById(id);
 const screens=[...document.querySelectorAll('.screen')];
 const intensity=[
- {id:'light',name:'Light · เบา',bpm:80,duration:60,scene:0},
- {id:'moderate',name:'Moderate · ปานกลาง',bpm:110,duration:90,scene:1},
- {id:'vigorous',name:'Vigorous · หนัก',bpm:130,duration:120,scene:2},
+ {id:'light',name:'Light · เบา',bpm:115,duration:60,scene:0},
+ {id:'moderate',name:'Moderate · ปานกลาง',bpm:128,duration:90,scene:1},
+ {id:'vigorous',name:'Vigorous · หนัก',bpm:140,duration:120,scene:2},
  {id:'maximum',name:'Maximum · หนักมาก',bpm:150,duration:120,scene:3},
- {id:'interval',name:'Interval · หนักสลับเบา',bpm:150,duration:120,scene:4}
+ {id:'interval',name:'Interval · หนักสลับเบา',bpm:150,duration:180,scene:4}
 ];
 let phase='workout',mode=intensity[0],score=0,combo=0,maxCombo=0,perfect=0,good=0,miss=0;
 let notes=[],elapsed=0,last=0,spawnAt=0,playing=false,paused=false,raf=0;
+let choreo=[],choreoIndex=0,nextTarget=0,round=0,readyTimer=null,ready=false;
 let ctx=null,master=null,musicTimer=null,nextBeat=0,step=0;
 const TRAVEL=1.65,HIT=0.67;
 const gestures=["up","side","forward","down"];let gestureStep=0;
 const beatDuration=()=>60/currentBpm();
 function currentBpm(){
- if(phase==='warmup')return Math.round(72+Math.min(1,elapsed/60)*18);
- if(phase==='cooldown')return Math.round(90-Math.min(1,elapsed/60)*18);
- if(mode.id==='interval')return Math.floor(elapsed/15)%2===0?150:80;
+ if(phase==='warmup')return 100;
+ if(phase==='cooldown')return 90;
+ // Interval uses a steady 150 BPM soundtrack. Movement cadence changes every 30 s.
  return mode.bpm;
 }
 function audioReady(){
@@ -67,7 +68,7 @@ function musicTick(){
  if(nextBeat<ctx.currentTime-.2)nextBeat=ctx.currentTime+.04;
  while(nextBeat<ctx.currentTime+.12){
   playBeat(nextBeat,step++);
-  nextBeat+=beatDuration()/2;
+  nextBeat+=beatDuration();
  }
 }
 function stopMusic(){if(musicTimer){clearInterval(musicTimer);musicTimer=null}}
@@ -80,7 +81,7 @@ function startMusic(){
 function ping(f){if(!ctx||!$('sound')?.checked)return;synth(f,ctx.currentTime,.10,.045)}
 function show(id){
  screens.forEach(s=>s.classList.toggle('active',s.id===id));
- if(id!=='game'){playing=false;cancelAnimationFrame(raf);stopMusic()}
+ if(id!=='game'){playing=false;ready=false;clearInterval(readyTimer);cancelAnimationFrame(raf);stopMusic()}
 }
 document.querySelectorAll('[data-screen]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.screen)));
 const homeLevelButton=[...document.querySelectorAll('#home .menu button')].find(b=>b.textContent.includes('Level Select'));
@@ -121,30 +122,77 @@ if(levelGrid){
   phaseBar.querySelectorAll('button').forEach(b=>{b.classList.toggle('selected',b.dataset.phase===phase);b.setAttribute('aria-pressed',String(b.dataset.phase===phase))});
   if(phase==='workout'){
    detail.textContent='Choose workout intensity. BPM is music tempo, not a clinical intensity measure.';
-   levelGrid.innerHTML=intensity.map((m,i)=>'<button class="level" type="button" data-mode="'+m.id+'"><img src="assets/'+['level1-spring.webp','level2-bakery.webp','level3-night.webp','level4-amusement.webp','level5-lakeside.webp'][m.scene]+'" alt=""><b>'+m.name+'</b><span>'+(m.id==='interval'?'80 ↔ 150':m.bpm)+' BPM · '+m.duration+' sec</span></button>').join('');
+   levelGrid.innerHTML=intensity.map((m,i)=>'<button class="level" type="button" data-mode="'+m.id+'"><img src="assets/'+['level1-spring.webp','level2-bakery.webp','level3-night.webp','level4-amusement.webp','level5-lakeside.webp'][m.scene]+'" alt=""><b>'+m.name+'</b><span>'+(m.id==='interval'?'150 · slow/fast every 30s':m.bpm)+' BPM · '+m.duration+' sec</span></button>').join('');
   }else{
    const warm=phase==='warmup';
-   detail.textContent=warm?'A gentle warm-up with gradually increasing tempo.':'A gentle cool-down with gradually decreasing tempo.';
-   levelGrid.innerHTML='<button class="level fb-single" type="button" data-mode="phase"><img src="assets/'+(warm?'level1-spring.webp':'level2-bakery.webp')+'" alt=""><b>'+(warm?'🌤 Start Warm-up':'🌙 Start Cool-down')+'</b><span>'+(warm?'72 → 90':'90 → 72')+' BPM · 60 sec</span></button>';
+   detail.textContent=warm?'Warm-up: 4 designed movement blocks.':'Cool-down: same movements as warm-up, at an easier cadence.';
+   levelGrid.innerHTML='<button class="level fb-single" type="button" data-mode="phase"><img src="assets/'+(warm?'level1-spring.webp':'level2-bakery.webp')+'" alt=""><b>'+(warm?'🌤 Start Warm-up':'🌙 Start Cool-down')+'</b><span>'+(warm?'100':'90')+' BPM · 60 sec</span></button>';
   }
  }
  phaseBar.addEventListener('click',e=>{const b=e.target.closest('[data-phase]');if(!b)return;phase=b.dataset.phase;render()});
  levelGrid.addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;mode=intensity.find(m=>m.id===b.dataset.mode)||intensity[0];start()});
  render();
 }
+// Each item is one motion target. A repeated arm gesture is deliberately spaced
+// by two beats so a held pose cannot automatically score repeated notes.
+const event=(side,pose,beats=1)=>({side,pose,beats});
+function makeChoreo(){
+ const a=[];
+ const add=(side,pose,count,beats=2)=>{for(let i=0;i<count;i++)a.push(event(side,pose,beats))};
+ const alt=(pose,count,first='right')=>{for(let i=0;i<count;i++)a.push(event(i%2===0?first:(first==='right'?'left':'right'),pose,1))};
+ const upDown=(side,count)=>{for(let i=0;i<count;i++){a.push(event(side,'up',1));a.push(event(side,'down',1))}};
+ const bothSide=(count)=>{for(let i=0;i<count;i++)a.push(event('both','side',2))};
+ const blocks={
+  1:()=>{add('right','forward',8);add('left','forward',8)},
+  2:()=>alt('forward',8),
+  3:()=>{add('right','up',8);add('left','up',8)},
+  4:()=>alt('up',8),
+  5:()=>upDown('right',4),
+  6:()=>upDown('left',4),
+  7:()=>bothSide(8)
+ };
+ if(phase==='warmup'||phase==='cooldown'){
+  alt('up',8,'left');alt('side',8,'left');
+  for(let i=0;i<4;i++)a.push(event('left','up'),event('right','up'),event('left','down'),event('right','down'));
+  alt('forward',8,'left'); // repeated until the phase ends
+ }else{
+  const order=['vigorous','maximum','interval'].includes(mode.id)?[3,1,4,2,5,6,7]:[1,2,3,4,5,6,7];
+  for(const n of order){if(mode.id==='light'&&n===7)continue;blocks[n]()}
+ }
+ return a;
+}
 function reset(){
- score=combo=maxCombo=perfect=good=miss=0;notes=[];elapsed=0;spawnAt=.7;last=0;paused=false;gestureStep=0;
+ score=combo=maxCombo=perfect=good=miss=0;notes=[];elapsed=0;spawnAt=0;last=0;paused=false;gestureStep=0;
+ choreo=makeChoreo();choreoIndex=0;nextTarget=.08+Math.ceil((TRAVEL+.3-.08)/(60/currentBpm()))*(60/currentBpm());round=0;
  $('target-lanes').querySelectorAll('.note').forEach(n=>n.remove());
  $('feedback').textContent='Ready? ♪';$('pause').textContent='Ⅱ';update();
 }
 function start(){
- reset();
+ clearInterval(readyTimer);reset();
  const scene=phase==='warmup'?0:phase==='cooldown'?1:mode.scene;
- $('game').dataset.level=String(scene);
- $('game').dataset.phase=phase;
- playing=true;show('game');playing=true;
- startMusic();
- raf=requestAnimationFrame(tick);
+ $('game').dataset.level=String(scene);$('game').dataset.phase=phase;
+ show('game');
+ ready=true;playing=false;
+ const overlay=document.getElementById('fb-countdown');
+ overlay.hidden=false;
+ overlay.innerHTML='<div class="fb-ready-title">READY TO MOVE?</div><button id="fb-ready-start" type="button">▶ Start Game</button><div class="fb-ready-sub">Check your camera and phone before starting</div>';
+ overlay.querySelector('button').onclick=()=>{
+  if(!ready)return;
+  audioReady();let count=3;
+  overlay.innerHTML='<div class="fb-count-num">3</div>';
+  if(ctx&&$('sound')?.checked)ping(550);
+  readyTimer=setInterval(()=>{
+   count--;
+   if(count>0){overlay.innerHTML='<div class="fb-count-num">'+count+'</div>';if(ctx&&$('sound')?.checked)ping(550)}
+   else{
+    clearInterval(readyTimer);overlay.innerHTML='<div class="fb-count-num">GO!</div>';
+    if(ctx&&$('sound')?.checked)ping(880);
+    setTimeout(()=>{if(!ready||!document.getElementById('game').classList.contains('active'))return;
+      overlay.hidden=true;ready=false;playing=true;last=0;startMusic();raf=requestAnimationFrame(tick);
+    },400);
+   }
+  },1000);
+ };
 }
 function duration(){return phase==='workout'?mode.duration:60}
 function update(){
@@ -153,13 +201,27 @@ function update(){
  $('timer').textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
  $('progress').style.width=Math.min(100,elapsed/duration()*100)+'%';
 }
-function spawn(){
- // Choreographed blocks: a full arm phrase before switching sides.
- const side=Math.floor(gestureStep/4)%2,pose=gestureStep%4;gestureStep++;
- const el=document.createElement('div');el.className='note arm-note';
- el.innerHTML='<span>'+['↑',side===0?'←':'→','✋','↓'][pose]+'</span><small>'+gestures[pose].toUpperCase()+'</small>';
- document.querySelectorAll('#target-lanes .lane')[side].append(el);
- notes.push({lane:side,pose,el,born:elapsed,hit:false});
+function spawn(item,target){
+ const sides=item.side==='both'?['left','right']:[item.side];
+ const group={remaining:sides.length,hitSides:new Set(),target};
+ for(const side of sides){
+  const lane=side==='left'?0:1,pose=gestures.indexOf(item.pose);
+  const el=document.createElement('div');el.className='note arm-note';
+  el.innerHTML='<span>'+['↑',side==='left'?'←':'→','✋','↓'][pose]+'</span><small>'+item.pose.toUpperCase()+'</small>';
+  document.querySelectorAll('#target-lanes .lane')[lane].append(el);
+  notes.push({lane,pose,el,born:target-TRAVEL,target,hit:false,group});
+ }
+}
+function schedule(){
+ while(nextTarget-TRAVEL<=elapsed && nextTarget<duration()-.05){
+  const item=choreo[choreoIndex];spawn(item,nextTarget);
+  choreoIndex=(choreoIndex+1)%choreo.length;
+  if(choreoIndex===0)round++;
+  const beat=60/currentBpm();
+  const slow=phase==='cooldown'||phase==='warmup'||(mode.id==='interval'&&Math.floor(nextTarget/30)%2===0);
+  // At 150 BPM, interval slow uses double the beat spacing.
+  nextTarget+=item.beats*beat*(slow?2:1);
+ }
 }
 function fail(n){
  if(n.hit)return;n.hit=true;n.el.remove();combo=0;miss++;$('feedback').textContent='MISS';update();
@@ -170,10 +232,8 @@ function tick(time){
  const dt=Math.min(.05,(time-last)/1000);last=time;
  if(!paused){
   elapsed+=dt;
-  while(elapsed>=spawnAt&&spawnAt<duration()-TRAVEL){
-   spawn();
-   spawnAt+=phase==='workout'?(mode.id==='light'?.85:mode.id==='moderate'?.65:mode.id==='vigorous'?.52:.45):.95;
-  }
+  schedule();
+  if(mode.id==='interval'&&phase==='workout')$('feedback').dataset.interval=Math.floor(elapsed/30)%2===0?'SLOW':'FAST';
   for(const n of notes){
    if(n.hit)continue;
    const p=(elapsed-n.born)/TRAVEL;
@@ -188,12 +248,12 @@ function tick(time){
  raf=requestAnimationFrame(tick);
 }
 function move(lane,pose){
- if(!playing||paused)return;
- const candidates=notes.filter(n=>!n.hit&&n.lane===lane&&(pose===undefined||n.pose===pose)).sort((a,b)=>Math.abs(elapsed-a.born-TRAVEL)-Math.abs(elapsed-b.born-TRAVEL));
+ if(!playing||paused||pose<0)return;
+ const candidates=notes.filter(n=>!n.hit&&n.lane===lane&&(pose===undefined||n.pose===pose)).sort((a,b)=>Math.abs(elapsed-a.target)-Math.abs(elapsed-b.target));
  const n=candidates[0];
  if(!n){$('feedback').textContent='Keep moving!';return}
- const delta=Math.abs(elapsed-n.born-TRAVEL);
- if(delta>.55){$('feedback').textContent=elapsed-n.born<TRAVEL?'Too early!':'Too late!';return}
+ const delta=Math.abs(elapsed-n.target);
+ if(delta>.48){$('feedback').textContent=elapsed<n.target?'Too early!':'Too late!';return}
  n.hit=true;n.el.remove();combo++;maxCombo=Math.max(maxCombo,combo);
  if(delta<.20){perfect++;score+=100+Math.min(combo,20)*5;$('feedback').textContent='PERFECT! ✨';ping(750)}
  else{good++;score+=50+Math.min(combo,20)*2;$('feedback').textContent='GOOD! 🌸';ping(560)}
