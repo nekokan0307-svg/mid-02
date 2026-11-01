@@ -25,7 +25,7 @@ window.fitbeatHit=(side,pose)=>{
  const assisted=$('ds-use').checked&&connection?.open&&$('ds-side').value===side;
  if(assisted){
   // Require a fresh inertial impulse AND a camera-confirmed pose. Prevent held-pose scoring.
-  if(now-latestPulse>420||latestPulse<=lastHit)return;
+  if(now-latestPulse>850||latestPulse<=lastHit)return;
   lastHit=latestPulse;
  }
  original?.(side,pose);

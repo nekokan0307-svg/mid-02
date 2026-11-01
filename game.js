@@ -172,7 +172,7 @@ function tick(time){
   elapsed+=dt;
   while(elapsed>=spawnAt&&spawnAt<duration()-TRAVEL){
    spawn();
-   spawnAt+=phase==='workout'?(mode.id==='light'?3.8:mode.id==='moderate'?3.1:mode.id==='vigorous'?2.6:2.3):4;
+   spawnAt+=phase==='workout'?(mode.id==='light'?2.0:mode.id==='moderate'?1.65:mode.id==='vigorous'?1.35:1.15):2.1;
   }
   for(const n of notes){
    if(n.hit)continue;
@@ -193,9 +193,9 @@ function move(lane,pose){
  const n=candidates[0];
  if(!n){$('feedback').textContent='Keep moving!';return}
  const delta=Math.abs(elapsed-n.born-TRAVEL);
- if(delta>.40){$('feedback').textContent=elapsed-n.born<TRAVEL?'Too early!':'Too late!';return}
+ if(delta>.52){$('feedback').textContent=elapsed-n.born<TRAVEL?'Too early!':'Too late!';return}
  n.hit=true;n.el.remove();combo++;maxCombo=Math.max(maxCombo,combo);
- if(delta<.16){perfect++;score+=100+Math.min(combo,20)*5;$('feedback').textContent='PERFECT! ✨';ping(750)}
+ if(delta<.20){perfect++;score+=100+Math.min(combo,20)*5;$('feedback').textContent='PERFECT! ✨';ping(750)}
  else{good++;score+=50+Math.min(combo,20)*2;$('feedback').textContent='GOOD! 🌸';ping(560)}
  update();
 }

@@ -9,7 +9,7 @@ $('connect').onclick=()=>{
 function onMotion(e){const a=e.acceleration||e.accelerationIncludingGravity;if(!a)return;let energy=Math.hypot(a.x||0,a.y||0,a.z||0);
  // Use gravity-removed acceleration when available; high-pass filter otherwise.
  if(!e.acceleration){base=base*.94+energy*.06;energy=Math.abs(energy-base)}
- filtered=.58*filtered+.42*energy;const now=performance.now();const punch=filtered>3.1&&now-lastPulse>300;
+ filtered=.38*filtered+.62*energy;const now=performance.now();const punch=filtered>1.9&&now-lastPulse>230;
  if(punch){lastPulse=now;count++;$('count').textContent=String(count)}
  $('motion').textContent=filtered.toFixed(1)+' m/s²';
  if(conn?.open&&(now-lastSend>45||punch)){lastSend=now;conn.send({type:'motion',seq:++seq,energy:filtered,punch,side})}

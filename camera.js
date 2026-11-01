@@ -54,7 +54,7 @@ function detect(lm,side,now,world){
  return ['none',visibility*.5]
 }
 
-async function frame(){if(!running)return;requestAnimationFrame(frame);if(!tracker||video.readyState<2||video.currentTime===lastVideo||performance.now()-lastFrame<18)return;
+async function frame(){if(!running)return;requestAnimationFrame(frame);if(!tracker||video.readyState<2||video.currentTime===lastVideo||performance.now()-lastFrame<45)return;
  lastVideo=video.currentTime;lastFrame=performance.now();try{
  const r=tracker.detectForVideo(video,lastFrame),lm=r.landmarks?.[0],world=r.worldLandmarks?.[0];if(!lm){status.textContent='ไม่พบผู้เล่น';return}
  const labels=[];for(const side of ['left','right']){const [key]=detect(lm,side,lastFrame,world),s=stables[side];if(s.key===key)s.n=Math.min(s.n+1,5);else{s.key=key;s.n=1}if(s.n>=1&&key==='down'||s.n>=2&&key!=='none'){window.fitbeatHit?.(side,key);labels.push(side[0].toUpperCase()+':'+key)}else labels.push(side[0].toUpperCase()+':—')}
