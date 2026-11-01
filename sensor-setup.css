@@ -1,0 +1,16 @@
+
+#sensor-setup{overflow-y:auto}
+.sensor-setup-shell{max-width:850px;margin:24px auto;padding:16px;background:#fff8f3ed;border:2px solid #f5cadb;border-radius:20px;color:#5a3c4b}
+.sensor-setup-shell h2{margin:0 0 12px}
+.sensor-devices{display:grid;gap:14px}
+#sensor-setup #sensor-controls,#sensor-setup .dual-panel{position:static!important;transform:none!important;inset:auto!important;max-width:none!important;width:auto!important;margin:0!important;display:block!important;visibility:visible!important;opacity:1!important;z-index:auto!important}
+#sensor-setup #sensor-controls{padding:12px;border:2px solid #f2d3de;border-radius:14px;background:#fff}
+#sensor-setup .dual-panel{padding:12px;background:#fff;border-radius:14px}
+.sensor-camera-preview{display:none;max-width:200px;margin:10px 0}
+.sensor-camera-preview.enabled{display:block}
+.sensor-camera-preview video{width:100%!important;height:auto!important;max-width:200px!important;position:static!important;transform:scaleX(-1)!important;display:block!important;object-fit:cover;border-radius:12px}
+.sensor-camera-preview video[hidden]{display:none!important}
+.sensor-preview-actions{margin:12px 0}
+.sensor-setup-footer{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.sensor-note{font-size:13px;line-height:1.6}
+#game #camera-video,#game .dual-panel{display:none!important}
