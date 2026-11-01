@@ -1,0 +1,7 @@
+FITBEAT V2 CAMERA PATCH
+
+1. ต้องมีโฟลเดอร์เกม FITBEAT_REBUILT_V1 เดิมอยู่ก่อน
+2. แตก ZIP นี้ แล้วคัดลอก camera.js และ game.js ไปวางทับไฟล์ชื่อเดียวกันในโฟลเดอร์เกมเดิม
+3. ห้ามลบไฟล์อื่น เช่น pose_landmarker_lite.task, assets, index.html
+4. เปิดเกมผ่าน localhost หรือ HTTPS
+5. แพตช์นี้แก้การตรวจจับ DOWN และลูกศร LEFT/RIGHT; ไม่ใช่เกมเต็ม

@@ -157,7 +157,7 @@ function spawn(){
  // Choreographed blocks: a full arm phrase before switching sides.
  const side=Math.floor(gestureStep/4)%2,pose=gestureStep%4;gestureStep++;
  const el=document.createElement('div');el.className='note arm-note';
- el.innerHTML='<span>'+['↑','↔','→','↓'][pose]+'</span><small>'+gestures[pose].toUpperCase()+'</small>';
+ el.innerHTML='<span>'+['↑',side===0?'←':'→','✋','↓'][pose]+'</span><small>'+gestures[pose].toUpperCase()+'</small>';
  document.querySelectorAll('#target-lanes .lane')[side].append(el);
  notes.push({lane:side,pose,el,born:elapsed,hit:false});
 }

@@ -7,7 +7,7 @@ function detect(lm,side,now,world){
  const ids=side==='left'?[11,13,15,23]:[12,14,16,24];
  const [shoulder,elbow,wrist,hip]=ids.map(i=>lm[i]);
  const visibility=Math.min(shoulder.visibility??1,elbow.visibility??1,wrist.visibility??1);
- if(visibility<.45)return ['none',0];
+ if(visibility<.35)return ['none',0];
  const torso=Math.max(.06,dist(shoulder,hip)),arm=dist(shoulder,wrist);
  const straight=angle(shoulder,elbow,wrist)>140;
  const dy=(wrist.y-shoulder.y)/torso,dx=Math.abs(wrist.x-shoulder.x)/torso;
@@ -19,6 +19,9 @@ function detect(lm,side,now,world){
  const radius=h.reduce((a,p)=>a+Math.hypot(p.x-cx,p.y-cy),0)/h.length;
  turns=(Math.abs(travel)>Math.PI*1.55&&radius>torso*.2&&radius<torso*1.8)?Math.abs(travel):0}
  if(turns)return ['circlemove',visibility];
+ // Recognize relaxed arms-down first: wrists at or below the hip / well below shoulder.
+ // A neutral, held-down arm should remain recognized without requiring movement.
+ if(dy>.52 && wrist.y>=elbow.y-.06 && dx<.95)return ['down',visibility];
  // MediaPipe world coordinates provide relative depth in meters. The torso vector
  // establishes a body-local vertical, reducing sensitivity to camera tilt.
  if(world?.length>=25){
@@ -42,19 +45,19 @@ function detect(lm,side,now,world){
     return ['forward',visibility*.9];
   if(elevation>40&&len>.18)return ['up',visibility];
   if(elbowStraight&&elevation>-30&&elevation<32&&lateral>.58&&lateral>depth*.9)return ['side',visibility];
-  if(elevation< -38)return ['down',visibility];
+  if(elevation< -25 || dy>.48)return ['down',visibility];
  }
  // 2D fallback for partial world tracking; deliberately conservative.
  if(dy<-.6&&arm>torso*.65)return ['up',visibility];
  if(straight&&dx>.65&&Math.abs(dy)<.5)return ['side',visibility];
- if(dy>.65&&dx<.6)return ['down',visibility];
+ if(dy>.43&&dx<.95)return ['down',visibility];
  return ['none',visibility*.5]
 }
 
-async function frame(){if(!running)return;requestAnimationFrame(frame);if(!tracker||video.readyState<2||video.currentTime===lastVideo||performance.now()-lastFrame<40)return;
+async function frame(){if(!running)return;requestAnimationFrame(frame);if(!tracker||video.readyState<2||video.currentTime===lastVideo||performance.now()-lastFrame<18)return;
  lastVideo=video.currentTime;lastFrame=performance.now();try{
  const r=tracker.detectForVideo(video,lastFrame),lm=r.landmarks?.[0],world=r.worldLandmarks?.[0];if(!lm){status.textContent='ไม่พบผู้เล่น';return}
- const labels=[];for(const side of ['left','right']){const [key]=detect(lm,side,lastFrame,world),s=stables[side];if(s.key===key)s.n=Math.min(s.n+1,5);else{s.key=key;s.n=1}if(s.n>=2&&key!=='none'){window.fitbeatHit?.(side,key);labels.push(side[0].toUpperCase()+':'+key)}else labels.push(side[0].toUpperCase()+':—')}
+ const labels=[];for(const side of ['left','right']){const [key]=detect(lm,side,lastFrame,world),s=stables[side];if(s.key===key)s.n=Math.min(s.n+1,5);else{s.key=key;s.n=1}if(s.n>=1&&key==='down'||s.n>=2&&key!=='none'){window.fitbeatHit?.(side,key);labels.push(side[0].toUpperCase()+':'+key)}else labels.push(side[0].toUpperCase()+':—')}
  status.textContent='Tracking · '+labels.join(' ');
  }catch(e){status.textContent='Tracking: '+e.message}}
 btn.addEventListener('click',async()=>{
