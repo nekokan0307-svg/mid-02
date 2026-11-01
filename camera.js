@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id),video=$('camera-video'),btn=$('camera-toggle'),status=$('camera-status');
 let tracker=null,stream=null,running=false,lastVideo=-1,lastFrame=0;
-const histories={left:[],right:[]},stables={left:{key:'none',n:0,lastHit:'none',lastAt:0},right:{key:'none',n:0,lastHit:'none',lastAt:0}};
+const histories={left:[],right:[]},stables={left:{key:'none',n:0,lastHit:'none',lastAt:0,forwardArmed:true},right:{key:'none',n:0,lastHit:'none',lastAt:0,forwardArmed:true}};
 function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 function angle(a,b,c){const ux=a.x-b.x,uy=a.y-b.y,vx=c.x-b.x,vy=c.y-b.y;return Math.acos(Math.max(-1,Math.min(1,(ux*vx+uy*vy)/(Math.hypot(ux,uy)*Math.hypot(vx,vy)+1e-9))))*180/Math.PI}
 function detect(lm,side,now,world){
@@ -9,7 +9,8 @@ function detect(lm,side,now,world){
  const visibility=Math.min(shoulder.visibility??1,elbow.visibility??1,wrist.visibility??1);
  if(visibility<.35)return ['none',0];
  const torso=Math.max(.06,dist(shoulder,hip)),arm=dist(shoulder,wrist);
- const straight=angle(shoulder,elbow,wrist)>140;
+ const elbowAngle=angle(shoulder,elbow,wrist);
+ const straight=elbowAngle>140;
  const dy=(wrist.y-shoulder.y)/torso,dx=Math.abs(wrist.x-shoulder.x)/torso;
  const h=histories[side];h.push({x:wrist.x,y:wrist.y,t:now});
  while(h.length&&(now-h[0].t>1500))h.shift();
@@ -21,7 +22,7 @@ function detect(lm,side,now,world){
  if(turns)return ['circlemove',visibility];
  // Recognize relaxed arms-down first: wrists at or below the hip / well below shoulder.
  // A neutral, held-down arm should remain recognized without requiring movement.
- if(dy>.52 && wrist.y>=elbow.y-.06 && dx<.95)return ['down',visibility];
+ if(dy>.58 && wrist.y>=elbow.y-.06 && dx<.95)return ['down',visibility];
  // MediaPipe world coordinates provide relative depth in meters. The torso vector
  // establishes a body-local vertical, reducing sensitivity to camera tilt.
  if(world?.length>=25){
@@ -41,13 +42,24 @@ function detect(lm,side,now,world){
   const elbowStraight=dot(unit(elbow3),unit(forearm3))>.72;
   // A forward reach points away from the torso, approximately horizontal,
   // with depth dominance rather than the lateral direction of a side raise.
-  if(elbowStraight&&len>Math.max(.12,shoulderWidth*.7)&&elevation>-28&&elevation<40&&depth>.48&&depth>lateral*.95)
+  // A punch towards the camera often foreshortens the arm in 2D.
+  // Use relative wrist depth + elbow extension, not a single strict depth ratio.
+  const reachZ=Math.abs(W.z-S.z);
+  const torsoDepth=Math.abs(H.z-S.z);
+  const projectedNearShoulder=Math.abs(dy)<.85&&dx<1.25;
+  const extended=elbowAngle>128||elbowStraight;
+  if(extended&&projectedNearShoulder&&elevation>-48&&elevation<55&&
+     ((depth>.32&&depth>lateral*.62)||(reachZ>Math.max(.10,torsoDepth*.9)&&depth>.23)))
     return ['forward',visibility*.9];
   if(elevation>40&&len>.18)return ['up',visibility];
   if(elbowStraight&&elevation>-30&&elevation<32&&lateral>.58&&lateral>depth*.9)return ['side',visibility];
   if(elevation< -25 || dy>.48)return ['down',visibility];
  }
- // 2D fallback for partial world tracking; deliberately conservative.
+ // 2D fallback: a straight arm aimed at the camera looks short in the image.
+ // Restrict to shoulder height to avoid confusing ordinary down/side poses.
+ const forearm=dist(elbow,wrist),upper=dist(shoulder,elbow);
+ if(elbowAngle>135&&Math.abs(dy)<.58&&dx<.66&&
+    forearm<Math.max(.12,upper*1.35)&&arm<torso*1.4)return ['forward',visibility*.7];
  if(dy<-.6&&arm>torso*.65)return ['up',visibility];
  if(straight&&dx>.65&&Math.abs(dy)<.5)return ['side',visibility];
  if(dy>.43&&dx<.95)return ['down',visibility];
@@ -57,7 +69,22 @@ function detect(lm,side,now,world){
 async function frame(){if(!running)return;requestAnimationFrame(frame);if(!tracker||video.readyState<2||video.currentTime===lastVideo||performance.now()-lastFrame<33)return;
  lastVideo=video.currentTime;lastFrame=performance.now();try{
  const r=tracker.detectForVideo(video,lastFrame),lm=r.landmarks?.[0],world=r.worldLandmarks?.[0];if(!lm){status.textContent='ไม่พบผู้เล่น';return}
- const labels=[];for(const side of ['left','right']){const [key]=detect(lm,side,lastFrame,world),s=stables[side];if(s.key===key)s.n=Math.min(s.n+1,5);else{s.key=key;s.n=1}if(key==='none'){s.lastHit='none';labels.push(side[0].toUpperCase()+':—')}else if(s.n>=2){if(key!==s.lastHit||lastFrame-s.lastAt>480){window.fitbeatHit?.(side,key);s.lastHit=key;s.lastAt=lastFrame}labels.push(side[0].toUpperCase()+':'+key)}else labels.push(side[0].toUpperCase()+':—')}
+ const labels=[];
+ for(const side of ['left','right']){
+  const [key]=detect(lm,side,lastFrame,world),s=stables[side];
+  if(s.key===key)s.n=Math.min(s.n+1,5);else{s.key=key;s.n=1}
+  // Require a return/retraction before another forward punch is counted.
+  if(key!=='forward')s.forwardArmed=true;
+  if(key==='none'){s.lastHit='none';labels.push(side[0].toUpperCase()+':—');continue}
+  if(s.n>=2){
+   if(key==='forward'){
+    if(s.forwardArmed){window.fitbeatHit?.(side,'forward');s.forwardArmed=false;s.lastHit=key;s.lastAt=lastFrame}
+   }else if(key!==s.lastHit||lastFrame-s.lastAt>650){
+    window.fitbeatHit?.(side,key);s.lastHit=key;s.lastAt=lastFrame;
+   }
+   labels.push(side[0].toUpperCase()+':'+key)
+  }else labels.push(side[0].toUpperCase()+':—');
+ }
  status.textContent='Tracking · '+labels.join(' ');
  }catch(e){status.textContent='Tracking: '+e.message}}
 btn.addEventListener('click',async()=>{
