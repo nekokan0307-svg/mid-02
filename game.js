@@ -14,7 +14,7 @@ const intensity=[
 let phase='workout',mode=intensity[0],score=0,combo=0,maxCombo=0,perfect=0,good=0,miss=0;
 let notes=[],elapsed=0,last=0,spawnAt=0,playing=false,paused=false,raf=0;
 let ctx=null,master=null,musicTimer=null,nextBeat=0,step=0;
-const TRAVEL=3.3,HIT=0.67;
+const TRAVEL=1.65,HIT=0.67;
 const gestures=["up","side","forward","down"];let gestureStep=0;
 const beatDuration=()=>60/currentBpm();
 function currentBpm(){
@@ -133,7 +133,7 @@ if(levelGrid){
  render();
 }
 function reset(){
- score=combo=maxCombo=perfect=good=miss=0;notes=[];elapsed=0;spawnAt=.4;last=0;paused=false;gestureStep=0;
+ score=combo=maxCombo=perfect=good=miss=0;notes=[];elapsed=0;spawnAt=.7;last=0;paused=false;gestureStep=0;
  $('target-lanes').querySelectorAll('.note').forEach(n=>n.remove());
  $('feedback').textContent='Ready? ♪';$('pause').textContent='Ⅱ';update();
 }
@@ -172,7 +172,7 @@ function tick(time){
   elapsed+=dt;
   while(elapsed>=spawnAt&&spawnAt<duration()-TRAVEL){
    spawn();
-   spawnAt+=phase==='workout'?(mode.id==='light'?2.0:mode.id==='moderate'?1.65:mode.id==='vigorous'?1.35:1.15):2.1;
+   spawnAt+=phase==='workout'?(mode.id==='light'?.85:mode.id==='moderate'?.65:mode.id==='vigorous'?.52:.45):.95;
   }
   for(const n of notes){
    if(n.hit)continue;
@@ -193,7 +193,7 @@ function move(lane,pose){
  const n=candidates[0];
  if(!n){$('feedback').textContent='Keep moving!';return}
  const delta=Math.abs(elapsed-n.born-TRAVEL);
- if(delta>.52){$('feedback').textContent=elapsed-n.born<TRAVEL?'Too early!':'Too late!';return}
+ if(delta>.55){$('feedback').textContent=elapsed-n.born<TRAVEL?'Too early!':'Too late!';return}
  n.hit=true;n.el.remove();combo++;maxCombo=Math.max(maxCombo,combo);
  if(delta<.20){perfect++;score+=100+Math.min(combo,20)*5;$('feedback').textContent='PERFECT! ✨';ping(750)}
  else{good++;score+=50+Math.min(combo,20)*2;$('feedback').textContent='GOOD! 🌸';ping(560)}
