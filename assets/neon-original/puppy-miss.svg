@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
+ <defs><linearGradient id="fur" x2=".5" y2="1"><stop stop-color="#ffdc9d"/><stop offset="1" stop-color="#e9a76b"/></linearGradient><linearGradient id="hood" x2="0" y2="1"><stop stop-color="#49bbff"/><stop offset="1" stop-color="#2448b9"/></linearGradient></defs>
+ <ellipse cx="320" cy="572" rx="210" ry="28" fill="#52caff" opacity=".18"/>
+ <path d="M190 405 Q115 305 115 235 Q135 205 170 243 L245 410" fill="url(#hood)" stroke="#183d96" stroke-width="12"/>
+ <circle cx="122" cy="235" r="39" fill="#ffce8e" stroke="#bd7b54" stroke-width="8"/>
+ <path d="M450 405 Q525 305 525 235 Q505 205 470 243 L395 410" fill="url(#hood)" stroke="#183d96" stroke-width="12"/>
+ <circle cx="518" cy="235" r="39" fill="#ffce8e" stroke="#bd7b54" stroke-width="8"/>
+ <ellipse cx="320" cy="455" rx="148" ry="139" fill="url(#hood)" stroke="#132b76" stroke-width="12"/>
+ <path d="M292 381 L292 500 M346 381 L346 500" stroke="white" stroke-width="10" stroke-linecap="round"/>
+ <path d="M222 506 Q205 552 232 565 L293 565 Q312 545 287 516" fill="#ffcd8e" stroke="#ac7251" stroke-width="9"/>
+ <path d="M350 516 Q328 552 351 565 L413 565 Q433 545 413 506" fill="#ffcd8e" stroke="#ac7251" stroke-width="9"/>
+ <path d="M203 125 Q133 68 111 181 Q92 285 189 279" fill="#dc955c" stroke="#ad6d47" stroke-width="11"/>
+ <path d="M437 125 Q507 68 529 181 Q548 285 451 279" fill="#dc955c" stroke="#ad6d47" stroke-width="11"/>
+ <ellipse cx="320" cy="226" rx="170" ry="160" fill="url(#fur)" stroke="#b47d54" stroke-width="10"/>
+ <path d="M180 171 Q315 65 460 171" fill="none" stroke="#295dc8" stroke-width="35"/>
+ <path d="M187 159 Q319 71 453 159" fill="none" stroke="#d8f8ff" stroke-width="8"/>
+ <ellipse cx="320" cy="273" rx="110" ry="76" fill="#fff3e1"/>
+ <path d="M244 219 Q261 230 277 219 M363 219 Q379 230 395 219" fill="none" stroke="#442b36" stroke-width="9"/><ellipse cx="320" cy="249" rx="26" ry="18" fill="#4b3037"/><path d="M282 284 Q320 248 358 284" fill="none" stroke="#583748" stroke-width="9" stroke-linecap="round"/>
+ <path d="M215 358 Q320 391 425 358" stroke="#8edbff" stroke-width="10" fill="none"/>
+ <text x="445" y="100" font-size="70">💧</text>
+ </svg>
