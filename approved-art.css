@@ -1,0 +1,21 @@
+/* FITBEAT Approved Art Review — genuine approved images, no gameplay code removed */
+:root{--pink:#ff68cc;--plum:#8b4dff;--yellow:#ffda48;--ink:#f7f8ff}
+#home .home-art{background-image:linear-gradient(90deg,#08133722,#08133711),url('assets/approved/home-gym.png')!important;background-size:cover!important;background-position:center!important;filter:none!important;opacity:1!important}
+#home .home-content{position:relative;z-index:2}
+#home .logo{font-weight:1000!important;letter-spacing:2px!important;color:#fff!important;-webkit-text-stroke:2px #244fae;text-shadow:0 3px #152d79,0 0 15px #63eaff,0 0 28px #4c4dff!important}
+#home .logo span{color:#ffe17d!important}
+#home .subtitle{background:#0e1c54df!important;border:2px solid #79ddff!important;color:#fff!important}
+#home .menu button{border:3px solid #e8f8ff!important;border-radius:22px!important;background:linear-gradient(180deg,#4c91ff 0%,#1d5ad7 55%,#102e84 100%)!important;box-shadow:inset 0 3px 0 #b2f4ff,0 5px 0 #17276b,0 0 16px #52a9ff!important;color:white!important;text-shadow:0 2px #152466!important;font-weight:900!important}
+#home .menu button:nth-child(1){background:linear-gradient(#ffdb77,#ff9b36 65%,#d54d18)!important;box-shadow:inset 0 3px #fff1b0,0 5px #8d3b3b,0 0 18px #ffb642!important}
+#home .menu button:nth-child(2){background:linear-gradient(#ff8edc,#b74df0 65%,#7135b4)!important}
+#home .menu button:nth-child(3){background:linear-gradient(#79ecff,#259bdc 65%,#1a4ca7)!important}
+#home .menu button:nth-child(4){background:linear-gradient(#8f9dff,#6546d8 65%,#302887)!important}
+#home .menu button:nth-child(5){background:linear-gradient(#90a6ff,#426ac7 65%,#263b8d)!important}
+#home .puppy-stage img{content:url('assets/approved/bichon.png')!important;object-fit:contain!important;filter:drop-shadow(0 0 14px #59ccff)!important}
+#game .game-puppy img,#results .puppy{content:url('assets/approved/bichon.png')!important;object-fit:contain!important}
+#game .note{font-size:0!important;position:relative!important}
+#game .note[data-dir='up'],#game .note[data-direction='up']{background-image:url('assets/approved/direction-up.png')!important}
+#game .note[data-dir='down'],#game .note[data-direction='down']{background-image:url('assets/approved/direction-down.png')!important}
+#game .note[data-dir='side'],#game .note[data-direction='side']{background-image:url('assets/approved/direction-side.png')!important}
+#game .note[data-dir='forward'],#game .note[data-direction='forward']{background-image:url('assets/approved/direction-forward.png')!important}
+@media(max-width:680px){#home .home-art{background-position:center!important}#home .menu button{font-size:clamp(13px,3.2vw,19px)!important}}

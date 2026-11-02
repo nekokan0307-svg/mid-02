@@ -1,0 +1,38 @@
+/* FITBEAT NEON — approved art direction adapted to playable two-arm game */
+:root{--ink:#eaf7ff;--cream:#0e193c;--pink:#ff61d7;--plum:#a967ff;--sage:#66ff9e;--yellow:#ffe765}
+body{background:radial-gradient(ellipse at 50% 10%,#322267,#080d24 75%);color:#f5f7ff}
+.shell{background:#0c1536;border:3px solid #79b8ff;box-shadow:0 0 25px #3ca9ff88,0 0 55px #a14cff66}
+.topbar{background:#101c42;color:#fff;border-bottom:2px solid #4edcff}.topbar a{color:#83edff}
+.screen{color:#fff;background:radial-gradient(ellipse at center,#292b75,#0a1235 80%)}
+h2{color:#fff;text-shadow:0 0 12px #80dfff,0 0 25px #a84bff}
+.logo{color:#8deaff;text-shadow:0 0 15px #45bfff,0 0 25px #ab5cff}.logo span{color:#ffa4f6}
+.subtitle,.pill,.result-card,.result-stats,.instructions>div,.level,.fb-guide-grid article,.fb-guide-note{background:#14214be8!important;color:#fff!important;border:2px solid #61dfff!important;box-shadow:0 0 15px #3baaff70!important}
+button{background:#1d2a62;color:#fff;border:2px solid #79dfff;box-shadow:0 0 12px #55caffaa;text-shadow:0 0 5px #fff5}button:hover{background:#30448a;box-shadow:0 0 23px #7beaff}button.secondary{background:#3c226b}
+#home .home-art{background-image:linear-gradient(90deg,#10103488,#10103422),url('assets/neon-home.webp');filter:saturate(1.2)}
+#game .game-bg{background-image:linear-gradient(#090c2ad9,#090c2ab8),url('assets/neon-vigorous.webp');filter:saturate(1.35)}
+#game[data-level="0"] .game-bg{background-image:linear-gradient(#090c2ad9,#090c2ab8),url('assets/neon-light.webp')}
+#game[data-level="1"] .game-bg{background-image:linear-gradient(#090c2ad9,#090c2ab8),url('assets/neon-moderate.webp')}
+#game[data-level="2"] .game-bg{background-image:linear-gradient(#090c2ad9,#090c2ab8),url('assets/neon-vigorous.webp')}
+#game .game-progress{background:#111e48;border:2px solid #72e8ff;box-shadow:0 0 13px #6adfff}
+#game .game-progress div{background:linear-gradient(90deg,#48e8ff,#f97dff)}
+#game .play-area{height:500px;isolation:isolate}
+#game .lanes{left:27%;width:49%;top:10px;height:420px;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#game .lane{background:linear-gradient(180deg,#14234b88,#19195aaa);border:2px solid #62e6ff;border-radius:18px;box-shadow:inset 0 0 25px #1be8ff25,0 0 12px #40eaff66;overflow:visible}
+#game .lane[data-side=right]{border-color:#f78bff;box-shadow:inset 0 0 25px #e76aff25,0 0 12px #f78bff66}
+#game .lane-name{background:#101c43;border:2px solid #76e9ff;border-radius:10px;color:#fff;font-size:clamp(.85rem,1.5vw,1.2rem);font-weight:900;padding:10px 3px;text-shadow:0 0 8px #5bdfff}
+#game .lane[data-side=right] .lane-name{border-color:#ff80e9;text-shadow:0 0 8px #ff80e9}
+#game .hit{bottom:8px;left:50%;transform:translateX(-50%);width:83%;height:43px;border-radius:50%;border:4px solid #71efff;background:#40eaff55;box-shadow:0 0 12px #49eaff,0 0 25px #49eaff;font-size:0}
+#game .lane[data-side=right] .hit{border-color:#ff8bf5;background:#ff69df55;box-shadow:0 0 12px #ff8bf5,0 0 25px #ff8bf5}
+#game .note{width:min(94%,160px);min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid var(--glow,#ffe55e);border-radius:20px;background:#0c1435f5;box-shadow:0 0 14px var(--glow,#ffe55e),inset 0 0 16px var(--glow,#ffe55e);filter:none;z-index:4;text-align:center}
+#game .note span{font:900 clamp(3.5rem,7vw,5.7rem)/1 Arial,sans-serif;color:var(--glow);text-shadow:0 0 12px var(--glow),0 0 20px var(--glow)}
+#game .note small{color:#fff;font-size:clamp(.8rem,1.4vw,1.05rem);font-weight:900;text-shadow:0 0 7px #fff}
+#game .note[data-pose="up"]{--glow:#ffe45c}#game .note[data-pose="down"]{--glow:#ff6fc9}#game .note[data-pose="side"]{--glow:#5be9ff}#game .note[data-pose="forward"]{--glow:#76ff83}
+#game .feedback{top:46%;color:#fff;text-shadow:0 0 14px #ff70ec,0 0 26px #ff70ec;font-size:clamp(1.4rem,3vw,2.6rem)}
+#game .combo{color:#fff;text-shadow:0 0 14px #ff70ec}
+#game .game-puppy{width:23%;filter:drop-shadow(0 0 12px #79dfff88)}
+.fb-next{position:absolute;right:1%;top:8%;width:20%;min-width:130px;z-index:5;background:#111b42e9;border:2px solid #b678ff;border-radius:17px;box-shadow:0 0 18px #a36bff99;padding:12px 5px;text-align:center}
+.fb-next-title{color:#d9bbff;font-weight:900;letter-spacing:.15em}.fb-next-symbol{font-size:3.5rem;font-weight:900;line-height:1.2;color:#ffe55c;text-shadow:0 0 14px currentColor}.fb-next-name{font-weight:900;font-size:1.1rem}.fb-next-side{color:#a5edff;font-size:.8rem}
+#game .game-tip{color:#fff;background:#111d45;border:1px solid #5be9ff}
+.neon-puppy{object-fit:contain;mix-blend-mode:screen;border-radius:18px}
+#game .fb-ready-overlay{background:#0b143be9!important;color:#fff!important}
+@media(max-width:750px){#game .lanes{left:4%;width:69%;gap:7px}#game .game-puppy{width:18%}.fb-next{min-width:0;width:25%;padding:7px 2px}.fb-next-symbol{font-size:2.4rem}#game .note{min-height:72px}#game .note span{font-size:3.3rem}#game .note small{font-size:.75rem}}

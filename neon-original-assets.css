@@ -1,0 +1,18 @@
+/* FITBEAT original independent neon asset pack */
+#home .home-art{background-image:linear-gradient(90deg,#090e2bb0,#090e2b25),url('assets/neon-original/bg-home.png')!important}
+#game .game-bg{background-image:linear-gradient(#070b2580,#070b2590),url('assets/neon-original/bg-moderate.png')!important;background-size:cover!important;background-position:center!important;opacity:.75!important}
+#game[data-phase="warmup"] .game-bg{background-image:linear-gradient(#070b2580,#070b2590),url('assets/neon-original/bg-warmup.png')!important}
+#game[data-phase="cooldown"] .game-bg{background-image:linear-gradient(#070b2580,#070b2590),url('assets/neon-original/bg-cooldown.png')!important}
+#game[data-level="0"]:not([data-phase="warmup"]):not([data-phase="cooldown"]) .game-bg{background-image:linear-gradient(#070b2580,#070b2590),url('assets/neon-original/bg-light.png')!important}
+#game[data-level="1"]:not([data-phase="warmup"]):not([data-phase="cooldown"]) .game-bg{background-image:linear-gradient(#070b2580,#070b2590),url('assets/neon-original/bg-moderate.png')!important}
+#game[data-level="2"] .game-bg{background-image:linear-gradient(#070b2580,#070b2590),url('assets/neon-original/bg-vigorous.png')!important}
+#game[data-level="3"] .game-bg{background-image:linear-gradient(#070b2580,#070b2590),url('assets/neon-original/bg-maximum.png')!important}
+#game[data-level="4"] .game-bg{background-image:linear-gradient(#070b2580,#070b2590),url('assets/neon-original/bg-interval.png')!important}
+#game .note{width:min(98%,175px)!important;min-height:108px!important;background-color:transparent!important;background-repeat:no-repeat!important;background-size:100% 100%!important;background-position:center!important;border:0!important;box-shadow:none!important;filter:drop-shadow(0 0 13px var(--glow))!important}
+#game .note[data-pose="up"]{background-image:url('assets/neon-original/icon-up.png')!important}
+#game .note[data-pose="down"]{background-image:url('assets/neon-original/icon-down.png')!important}
+#game .note[data-pose="side"]{background-image:url('assets/neon-original/icon-side.png')!important}
+#game .note[data-pose="forward"]{background-image:url('assets/neon-original/icon-forward.png')!important}
+#game .note span,#game .note small{visibility:hidden!important}
+.neon-puppy{mix-blend-mode:normal!important;border-radius:0!important}
+@media(max-width:750px){#game .note{min-height:83px!important}}

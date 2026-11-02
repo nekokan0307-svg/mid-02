@@ -122,11 +122,11 @@ if(levelGrid){
   phaseBar.querySelectorAll('button').forEach(b=>{b.classList.toggle('selected',b.dataset.phase===phase);b.setAttribute('aria-pressed',String(b.dataset.phase===phase))});
   if(phase==='workout'){
    detail.textContent='Choose workout intensity. BPM is music tempo, not a clinical intensity measure.';
-   levelGrid.innerHTML=intensity.map((m,i)=>'<button class="level" type="button" data-mode="'+m.id+'"><img src="assets/'+['level1-spring.webp','level2-bakery.webp','level3-night.webp','level4-amusement.webp','level5-lakeside.webp'][m.scene]+'" alt=""><b>'+m.name+'</b><span>'+(m.id==='interval'?'150 · slow/fast every 30s':m.bpm)+' BPM · '+m.duration+' sec</span></button>').join('');
+   levelGrid.innerHTML=intensity.map((m,i)=>'<button class="level" type="button" data-mode="'+m.id+'"><img src="assets/'+['neon-original/bg-light.png','neon-original/bg-moderate.png','neon-original/bg-vigorous.png','neon-original/bg-maximum.png','neon-original/bg-interval.png'][m.scene]+'" alt=""><b>'+m.name+'</b><span>'+(m.id==='interval'?'150 · slow/fast every 30s':m.bpm)+' BPM · '+m.duration+' sec</span></button>').join('');
   }else{
    const warm=phase==='warmup';
    detail.textContent=warm?'Warm-up: 4 designed movement blocks.':'Cool-down: same movements as warm-up, at an easier cadence.';
-   levelGrid.innerHTML='<button class="level fb-single" type="button" data-mode="phase"><img src="assets/'+(warm?'level1-spring.webp':'level2-bakery.webp')+'" alt=""><b>'+(warm?'🌤 Start Warm-up':'🌙 Start Cool-down')+'</b><span>'+(warm?'100':'90')+' BPM · 60 sec</span></button>';
+   levelGrid.innerHTML='<button class="level fb-single" type="button" data-mode="phase"><img src="assets/'+(warm?'neon-original/bg-light.png':'neon-original/bg-moderate.png')+'" alt=""><b>'+(warm?'🌤 Start Warm-up':'🌙 Start Cool-down')+'</b><span>'+(warm?'100':'90')+' BPM · 60 sec</span></button>';
   }
  }
  phaseBar.addEventListener('click',e=>{const b=e.target.closest('[data-phase]');if(!b)return;phase=b.dataset.phase;render()});
@@ -163,7 +163,7 @@ function makeChoreo(){
 }
 function reset(){
  score=combo=maxCombo=perfect=good=miss=0;notes=[];elapsed=0;spawnAt=0;last=0;paused=false;gestureStep=0;
- choreo=makeChoreo();choreoIndex=0;nextTarget=.08+Math.ceil((TRAVEL+.3-.08)/(60/currentBpm()))*(60/currentBpm());round=0;
+ choreo=makeChoreo();choreoIndex=0;updateNext();nextTarget=.08+Math.ceil((TRAVEL+.3-.08)/(60/currentBpm()))*(60/currentBpm());round=0;
  $('target-lanes').querySelectorAll('.note').forEach(n=>n.remove());
  $('feedback').textContent='Ready? ♪';$('pause').textContent='Ⅱ';update();
 }
@@ -206,16 +206,27 @@ function spawn(item,target){
  const group={remaining:sides.length,hitSides:new Set(),target};
  for(const side of sides){
   const lane=side==='left'?0:1,pose=gestures.indexOf(item.pose);
-  const el=document.createElement('div');el.className='note arm-note';
-  el.innerHTML='<span>'+['↑',side==='left'?'←':'→','✋','↓'][pose]+'</span><small>'+item.pose.toUpperCase()+'</small>';
+  const el=document.createElement('div');el.className='note arm-note';el.dataset.pose=item.pose;
+  el.innerHTML='<span>'+['↑','↔','➜','↓'][pose]+'</span><small>'+item.pose.toUpperCase()+'</small>';
   document.querySelectorAll('#target-lanes .lane')[lane].append(el);
   notes.push({lane,pose,el,born:target-TRAVEL,target,hit:false,group});
  }
 }
+const nextPanel=document.createElement('div');
+nextPanel.className='fb-next';
+nextPanel.innerHTML='<div class="fb-next-title">NEXT</div><div class="fb-next-symbol">↑</div><div class="fb-next-name">UP</div><div class="fb-next-side">LEFT ARM</div>';
+document.querySelector('#game .play-area')?.append(nextPanel);
+function updateNext(){
+ const item=choreo[choreoIndex];if(!item)return;
+ const symbols={up:'↑',down:'↓',side:'↔',forward:'➜'};
+ nextPanel.querySelector('.fb-next-symbol').textContent=symbols[item.pose]||'↑';
+ nextPanel.querySelector('.fb-next-name').textContent=item.pose.toUpperCase();
+ nextPanel.querySelector('.fb-next-side').textContent=item.side==='both'?'BOTH ARMS':item.side.toUpperCase()+' ARM';
+}
 function schedule(){
  while(nextTarget-TRAVEL<=elapsed && nextTarget<duration()-.05){
   const item=choreo[choreoIndex];spawn(item,nextTarget);
-  choreoIndex=(choreoIndex+1)%choreo.length;
+  choreoIndex=(choreoIndex+1)%choreo.length;updateNext();
   if(choreoIndex===0)round++;
   const beat=60/currentBpm();
   const slow=phase==='cooldown'||phase==='warmup'||(mode.id==='interval'&&Math.floor(nextTarget/30)%2===0);
