@@ -15,7 +15,7 @@ let phase='workout',mode=intensity[0],score=0,combo=0,maxCombo=0,perfect=0,good=
 let notes=[],elapsed=0,last=0,spawnAt=0,playing=false,paused=false,raf=0;
 let choreo=[],choreoIndex=0,nextTarget=0,round=0,readyTimer=null,ready=false;
 let ctx=null,master=null,musicTimer=null,nextBeat=0,step=0;
-const TRAVEL=1.65,HIT=0.67;
+const TRAVEL=3.3,HIT=0.67;
 const gestures=["up","side","forward","down"];let gestureStep=0;
 const beatDuration=()=>60/currentBpm();
 function currentBpm(){
@@ -206,8 +206,8 @@ function spawn(item,target){
  const group={remaining:sides.length,hitSides:new Set(),target};
  for(const side of sides){
   const lane=side==='left'?0:1,pose=gestures.indexOf(item.pose);
-  const el=document.createElement('div');el.className='note arm-note';el.dataset.pose=item.pose;
-  el.innerHTML='<span>'+['↑','↔','➜','↓'][pose]+'</span><small>'+item.pose.toUpperCase()+'</small>';
+  const el=document.createElement('div');el.className='note arm-note';el.dataset.pose=item.pose;el.dataset.side=side;
+  el.innerHTML='<span>'+['↑','↔','➜','↓'][pose]+'</span><small>'+side.toUpperCase()+' · '+item.pose.toUpperCase()+'</small>';
   document.querySelectorAll('#target-lanes .lane')[lane].append(el);
   notes.push({lane,pose,el,born:target-TRAVEL,target,hit:false,group});
  }

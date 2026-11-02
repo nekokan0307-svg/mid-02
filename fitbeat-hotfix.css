@@ -1,0 +1,16 @@
+/* Readability and two-lane clarity patch */
+#levels .level,#levels .level *{color:#fff!important;text-shadow:0 1px 3px #06102e!important}
+#levels .level{background:#12234b!important;border:2px solid #6fe4ff!important}
+#levels .level b{font-size:clamp(1.05rem,1.7vw,1.35rem)!important;line-height:1.3}
+#levels .level span{font-size:clamp(.92rem,1.3vw,1.1rem)!important;font-weight:800!important}
+#levels .level img{height:clamp(110px,15vw,200px)!important;object-fit:cover}
+#game .lanes{left:24%!important;width:53%!important;gap:24px!important}
+#game .lane{overflow:visible!important}
+#game .lane-name{position:relative;z-index:8!important;font-size:1.05rem!important}
+#game .note{width:clamp(90px,11vw,136px)!important;min-height:76px!important;max-height:90px!important;z-index:4!important;pointer-events:none}
+#game .note span{font-size:clamp(2.5rem,4vw,3.8rem)!important;line-height:1!important}
+#game .note small{font-size:.77rem!important;letter-spacing:.03em;white-space:nowrap}
+#game .lane[data-side=right] .note{border-style:double!important}
+#game .feedback{top:83%!important;left:51%!important;font-size:clamp(1.25rem,2.5vw,2rem)!important;z-index:7}
+#game .fb-next{right:0!important;top:7%!important;width:19%!important}
+@media(max-width:750px){#game .lanes{left:3%!important;width:71%!important;gap:9px!important}#game .note{width:min(94%,108px)!important;min-height:65px!important;max-height:75px!important}#game .note small{font-size:.62rem!important}#game .fb-next{right:0!important;width:24%!important}#game .feedback{left:44%!important;top:85%!important}}
